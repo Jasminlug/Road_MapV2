@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PROOF — Execution Roadmap</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --cream:#F5F0E8;
+  --bronze:#9E7B4A;
+  --bronze-light:#C4A06B;
+  --bronze-deep:#7A5C30;
+  --ink:#1C1A17;
+  --ink-mid:#4A4540;
+  --ink-light:#8A8278;
+  --ink-faint:#C8C2B8;
+  --surface:#FFFFFF;
+  --surface-warm:#FAF8F4;
+  --border:#E8E2D8;
+  --border-light:#F0EBE2;
+  --red:#B94040;
+  --red-bg:#F9EFEF;
+  --amber:#9A6E20;
+  --amber-bg:#FBF5EA;
+  --green:#2E6E4A;
+  --green-bg:#EBF5EF;
+  --blue:#2A4E7A;
+  --blue-bg:#EDF2F9;
+}
+html{font-size:14px;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;}
+
+/* ── HEADER ── */
+.header{background:var(--ink);padding:28px 40px 24px;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;}
+.header-wordmark{display:flex;align-items:baseline;gap:12px;}
+.header-wordmark h1{font-family:'Playfair Display',serif;font-size:22px;font-weight:400;color:var(--cream);letter-spacing:0.5px;}
+.header-wordmark span{font-size:10px;color:var(--ink-light);text-transform:uppercase;letter-spacing:2px;padding-bottom:2px;}
+.header-right{display:flex;align-items:center;gap:32px;}
+.phase-progress-group{text-align:right;}
+.phase-progress-label{font-size:10px;color:var(--ink-light);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;}
+.phase-progress-bar{width:160px;height:2px;background:rgba(255,255,255,0.12);border-radius:1px;}
+.phase-progress-fill{height:2px;background:var(--bronze-light);border-radius:1px;transition:width 0.5s ease;}
+.phase-progress-num{font-family:'Playfair Display',serif;font-size:20px;color:var(--bronze-light);margin-top:5px;}
+
+/* ── STATS BAR ── */
+.stats-bar{background:var(--surface);border-bottom:1px solid var(--border);display:flex;}
+.stat-item{flex:1;padding:14px 20px;border-right:1px solid var(--border);position:relative;}
+.stat-item:last-child{border-right:none;}
+.stat-num{font-family:'Playfair Display',serif;font-size:22px;font-weight:400;}
+.stat-label{font-size:10px;color:var(--ink-light);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+.stat-blocker .stat-num{color:var(--red);}
+.stat-inprogress .stat-num{color:var(--amber);}
+.stat-done .stat-num{color:var(--green);}
+.stat-total .stat-num{color:var(--ink);}
+
+/* ── NAV ── */
+.phase-nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 40px;display:flex;gap:0;}
+.phase-tab{font-size:11px;font-weight:500;padding:14px 20px;cursor:pointer;border-bottom:2px solid transparent;color:var(--ink-light);text-transform:uppercase;letter-spacing:1px;transition:color 0.2s,border-color 0.2s;white-space:nowrap;}
+.phase-tab:hover{color:var(--ink-mid);}
+.phase-tab.active{color:var(--ink);border-bottom-color:var(--bronze);}
+
+.subnav{display:none;background:var(--surface-warm);border-bottom:1px solid var(--border-light);padding:0 40px;overflow-x:auto;}
+.subnav.visible{display:flex;}
+.subnav-tab{font-size:10px;font-weight:500;padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;color:var(--ink-faint);text-transform:uppercase;letter-spacing:1px;transition:color 0.2s,border-color 0.2s;white-space:nowrap;}
+.subnav-tab:hover{color:var(--ink-mid);}
+.subnav-tab.active{color:var(--bronze);border-bottom-color:var(--bronze);}
+
+/* ── MAIN ── */
+.main{padding:32px 40px;max-width:1400px;}
+
+.phase-panel{display:none;}
+.phase-panel.active{display:block;}
+
+/* ── TRACK ── */
+.track{margin-bottom:36px;}
+.track-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border-light);}
+.track-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:400;color:var(--ink);}
+.track-pill{font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:1px;padding:3px 10px;border-radius:20px;}
+.pill-pending{background:#F0EBE2;color:var(--ink-mid);}
+.pill-research{background:var(--blue-bg);color:var(--blue);}
+.pill-operational{background:var(--amber-bg);color:var(--amber);}
+.pill-commercial{background:var(--green-bg);color:var(--green);}
+.pill-legal{background:#F3EBF8;color:#6B3A8E;}
+.pill-infra{background:var(--blue-bg);color:var(--blue);}
+.pill-gtm{background:#FEF3EA;color:#8E4A1A;}
+.pill-critical{background:var(--red-bg);color:var(--red);}
+.track-prog{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.track-prog-pct{font-size:11px;color:var(--ink-faint);}
+.track-prog-bar{width:64px;height:2px;background:var(--border);border-radius:1px;}
+.track-prog-fill{height:2px;background:var(--bronze-light);border-radius:1px;transition:width 0.3s;}
+
+/* ── TABLE ── */
+.task-table{width:100%;border-collapse:collapse;background:var(--surface);border-radius:10px;overflow:hidden;border:1px solid var(--border);table-layout:fixed;}
+.task-table th{background:var(--surface-warm);font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:1.2px;color:var(--ink-faint);padding:10px 16px;text-align:left;border-bottom:1px solid var(--border);}
+.task-table td{padding:14px 16px;border-bottom:1px solid var(--border-light);vertical-align:top;}
+.task-table tr:last-child td{border-bottom:none;}
+.task-table tbody tr{transition:background 0.15s;}
+.task-table tbody tr:hover td{background:var(--surface-warm);}
+
+.col-task{width:38%;}
+.col-timing{width:14%;}
+.col-dep{width:14%;}
+.col-status{width:13%;}
+.col-notes{width:21%;}
+
+.task-name{font-weight:500;font-size:13px;color:var(--ink);line-height:1.4;}
+.task-note{font-size:11px;color:var(--ink-light);margin-top:4px;line-height:1.6;}
+.task-timing{font-size:11px;color:var(--ink-mid);}
+.timing-critical{color:var(--red);font-weight:500;}
+.timing-week1{color:var(--amber);}
+.timing-resolved{color:var(--green);}
+
+.dep-chip{font-size:10px;background:var(--surface-warm);color:var(--ink-light);padding:3px 8px;border-radius:4px;border:1px solid var(--border);display:inline-block;line-height:1.4;}
+
+/* ── STATUS BADGES ── */
+.status-btn{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:500;padding:4px 10px;border-radius:20px;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;text-transform:uppercase;letter-spacing:0.5px;transition:opacity 0.15s;}
+.status-btn:hover{opacity:0.8;}
+.s-todo{background:var(--surface-warm);color:var(--ink-faint);border:1px solid var(--border);}
+.s-inprogress{background:var(--amber-bg);color:var(--amber);border:1px solid #E8D4A8;}
+.s-blocker{background:var(--red-bg);color:var(--red);border:1px solid #E8C0C0;}
+.s-done{background:var(--green);color:#fff;border:1px solid var(--green);}
+
+.dot{width:5px;height:5px;border-radius:50%;display:inline-block;flex-shrink:0;}
+.dot-todo{background:var(--ink-faint);}
+.dot-inprogress{background:var(--amber);}
+.dot-blocker{background:var(--red);}
+.dot-done{background:#fff;}
+
+/* ── DONE ROW ── */
+.row-done td{opacity:0.4;}
+.row-done .task-name{text-decoration:line-through;color:var(--ink-light);}
+.row-done{border-left:3px solid var(--green);}
+
+/* ── NOTES INPUT ── */
+.notes-input{width:100%;font-size:11px;border:none;border-bottom:1px solid transparent;padding:2px 0;outline:none;background:transparent;color:var(--ink-mid);font-family:'DM Sans',sans-serif;transition:border-color 0.2s;}
+.notes-input:focus{border-bottom-color:var(--bronze-light);}
+.notes-input::placeholder{color:var(--ink-faint);}
+
+/* ── FOOTER ── */
+.footer{background:var(--surface);border-top:1px solid var(--border);padding:14px 40px;display:flex;align-items:center;justify-content:space-between;}
+.footer-meta{font-size:11px;color:var(--ink-faint);}
+.footer-actions{display:flex;gap:8px;}
+.btn{font-size:11px;font-weight:500;color:var(--ink-mid);background:none;border:1px solid var(--border);padding:6px 16px;border-radius:4px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.15s;text-transform:uppercase;letter-spacing:0.5px;}
+.btn:hover{background:var(--surface-warm);border-color:var(--bronze-light);color:var(--bronze);}
+
+
+@media (max-width: 768px) {
+  .header{padding:20px;}
+  .header-wordmark h1{font-size:18px;}
+  .header-right .phase-progress-group{display:none;}
+  .stats-bar{display:grid;grid-template-columns:1fr 1fr;}
+  .stat-item{border-right:none;border-bottom:1px solid var(--border);}
+  .phase-nav{padding:0 16px;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;}
+  .phase-tab{padding:12px 14px;font-size:10px;}
+  .subnav{padding:0 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .main{padding:20px 16px;}
+  .track-head{flex-wrap:wrap;gap:8px;}
+  .track-prog{display:none;}
+
+  /* Hide table headers on mobile */
+  .task-table thead{display:none;}
+  .task-table,
+  .task-table tbody,
+  .task-table tr,
+  .task-table td{display:block;width:100%;}
+
+  /* Card layout per row */
+  .task-table tbody tr{
+    background:var(--surface);
+    border-radius:8px;
+    border:1px solid var(--border);
+    margin-bottom:10px;
+    padding:14px;
+    position:relative;
+  }
+  .task-table tbody tr.row-done{
+    border-left:3px solid var(--green);
+    opacity:0.5;
+  }
+  .task-table td{
+    padding:0;
+    border:none;
+  }
+
+  /* Task name + note always first */
+  .task-table td:first-child{
+    padding-bottom:10px;
+    border-bottom:1px solid var(--border-light);
+    margin-bottom:10px;
+  }
+
+  /* Timing + dep in a row */
+  .task-table td:nth-child(2),
+  .task-table td:nth-child(3){
+    display:inline-block;
+    width:auto;
+    margin-right:8px;
+    margin-bottom:8px;
+    font-size:11px;
+    color:var(--ink-light);
+  }
+  .task-table td:nth-child(2)::before{content:'⏱ ';}
+
+  /* Status badge row */
+  .task-table td:nth-child(4){
+    display:block;
+    margin-bottom:8px;
+  }
+
+  /* Notes full width */
+  .task-table td:nth-child(5){
+    display:block;
+  }
+  .notes-input{
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:6px 10px;
+    width:100%;
+  }
+
+  .footer{padding:12px 16px;flex-direction:column;gap:10px;align-items:flex-start;}
+  .footer-actions{display:flex;gap:8px;}
+}
+
+@media print{
+  body{background:white;}
+  .header{background:var(--ink)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .footer-actions,.subnav{display:none!important;}
+  .phase-panel{display:block!important;}
+  .phase-nav{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-wordmark">
+    <h1>PROOF</h1>
+    <span>Execution Roadmap</span>
+  </div>
+  <div class="header-right">
+    <div class="phase-progress-group">
+      <div class="phase-progress-label">Phase 0 complete</div>
+      <div class="phase-progress-bar"><div class="phase-progress-fill" id="globalBar" style="width:0%"></div></div>
+      <div class="phase-progress-num" id="globalPct">0%</div>
+    </div>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-item stat-blocker"><div class="stat-num" id="cnt-blocker">0</div><div class="stat-label">Blockers</div></div>
+  <div class="stat-item stat-inprogress"><div class="stat-num" id="cnt-inprogress">0</div><div class="stat-label">In Progress</div></div>
+  <div class="stat-item stat-done"><div class="stat-num" id="cnt-done">0</div><div class="stat-label">Done</div></div>
+  <div class="stat-item stat-total"><div class="stat-num" id="cnt-total">0</div><div class="stat-label">Phase 0 Tasks</div></div>
+</div>
+
+<div class="phase-nav">
+  <div class="phase-tab active" id="tab-p0" onclick="switchPhase('p0')">Phase 0 — POC</div>
+  <div class="phase-tab" id="tab-p1a" onclick="switchPhase('p1a')">Phase 1A — Legal</div>
+  <div class="phase-tab" id="tab-p1b" onclick="switchPhase('p1b')">Phase 1B — Build</div>
+  <div class="phase-tab" id="tab-p2" onclick="switchPhase('p2')">Phase 2 — Scale</div>
+</div>
+
+<div class="subnav visible" id="subnav-p0">
+  <div class="subnav-tab active" onclick="scrollTo('brand',this)">Brand</div>
+  <div class="subnav-tab" onclick="scrollTo('product',this)">Product & Regulatory</div>
+  <div class="subnav-tab" onclick="scrollTo('cogs',this)">COGS & Supply</div>
+  <div class="subnav-tab" onclick="scrollTo('logistics',this)">Logistics</div>
+  <div class="subnav-tab" onclick="scrollTo('commercial',this)">Pricing & Commercial</div>
+  <div class="subnav-tab" onclick="scrollTo('patients',this)">Patient Tracking</div>
+  <div class="subnav-tab" onclick="scrollTo('resolved',this)">Resolved</div>
+</div>
+
+<div class="main">
+  <div class="phase-panel active" id="panel-p0"><div id="p0-content"></div></div>
+  <div class="phase-panel" id="panel-p1a"><div id="p1a-content"></div></div>
+  <div class="phase-panel" id="panel-p1b"><div id="p1b-content"></div></div>
+  <div class="phase-panel" id="panel-p2"><div id="p2-content"></div></div>
+</div>
+
+<div class="footer">
+  <div class="footer-meta">Last updated: <span id="lastUpdated">—</span></div>
+  <div class="footer-actions">
+    <button class="btn" onclick="resetAll()">Reset</button>
+    <button class="btn" onclick="window.print()">Export</button>
+  </div>
+</div>
+
+<script>
+const P0_TRACKS=[
+  {id:"brand",title:"Brand & Identity",badge:"pending",badgeLabel:"In motion",tasks:[
+    {id:"b1",name:"Domain & brand name agreed",note:"Decision expected tomorrow or day after. Unlocks all visual identity and website work.",timing:"Tomorrow",timingClass:"timing-week1",dep:"Unlocks all branding",status:"inprogress"},
+    {id:"b2",name:"Logo & basic visual identity",note:"Minimum viable: logo, colour, one typeface. Enough to label packaging and appear on a landing page. Phase 0 doesn't need full brand — just enough to not look improvised.",timing:"After domain",timingClass:"",dep:"After b1",status:"todo"},
+    {id:"b3",name:"Landing page / website live",note:"Hebrew, mobile-first. WhatsApp CTA as primary action. Single-page Webflow or Carrd acceptable for Phase 0 — no checkout needed yet.",timing:"Week 1–2",timingClass:"timing-week1",dep:"After logo",status:"todo"}
+  ]},
+  {id:"product",title:"Product Architecture & Regulatory",badge:"research",badgeLabel:"Research required",tasks:[
+    {id:"p1",name:"Regulatory map: compounding lab vs compounding pharmacy",note:"Full map: what can be compounded, under which procedure (Procedure 135 / Regulation 29C), by whom, at what scale, and under whose licence. This determines your entire product architecture and is a hard blocker for pricing, sourcing, and branding.",timing:"Week 1 — Critical",timingClass:"timing-critical",dep:"Blocks p2, c1, pricing",status:"blocker"},
+    {id:"p2",name:"Branding on compounded Rx products — what is permitted?",note:"Can PROOF brand appear on the compounded formulation packaging? On inserts only? Not at all? The answer determines what the product physically looks like and how the brand is experienced at delivery.",timing:"Week 1–2",timingClass:"timing-week1",dep:"After p1",status:"todo"},
+    {id:"p3",name:"Bundle composition documented and locked",note:"Dr. Eric and Dr. Assi have decided on tiers and bundles. Get it in writing. Exact SKUs, formulations, and quantities per tier across both hair and performance lines.",timing:"Week 1",timingClass:"timing-week1",dep:"",status:"inprogress"},
+    {id:"p4",name:"XYON: permanently off or deferred — decision documented",note:"DECIDED: Off the table for Phase 0. Differentiation relies entirely on physician-designed compounded formulations — custom Rx tiers prescribed by Eric and Assi. No imported branded product. Reasoning to be documented for Phase 1 architecture review.",timing:"Decided",timingClass:"timing-resolved",dep:"",status:"done"}
+  ]},
+  {id:"cogs",title:"COGS & Supply Chain",badge:"operational",badgeLabel:"Operational",tasks:[
+    {id:"c1",name:"Compounding lab / pharmacy manufacturing partner identified",note:"Separate from the payment pharmacy. The entity that physically manufactures the compounded Rx product. First commercial conversation — approach under the pharmacy hat.",timing:"Week 1 — Critical",timingClass:"timing-critical",dep:"Blocks c2, pricing",status:"blocker"},
+    {id:"c2",name:"Rx compounded products — wholesale pricing negotiated",note:"B2B pricing under the pharmacy licence. Target: lab cost, not retail. Confirm lead times, minimum batch sizes, and delivery format.",timing:"Week 2",timingClass:"",dep:"After c1",status:"todo"},
+    {id:"c3",name:"OTC kit components — wholesale pricing negotiated",note:"Shampoo, derma roller, inserts, other Phase 0 OTC additions. Source at wholesale. Confirm minimum order quantities and delivery times.",timing:"Week 2",timingClass:"",dep:"",status:"todo"},
+    {id:"c4",name:"Full COGS sheet locked per tier",note:"Rx cost + OTC components + packaging + shipping + pharmacy dispensing fee + payment processing fee = total COGS. Net margin per bundle per tier. This number must exist before pricing is set.",timing:"Week 2–3",timingClass:"",dep:"After c2 + c3",status:"todo"}
+  ]},
+  {id:"logistics",title:"Logistics & Fulfilment",badge:"operational",badgeLabel:"Operational",tasks:[
+    {id:"l1",name:"Shipping method decided",note:"Three Phase 0 options: (a) courier direct from pharmacy to patient, (b) Or assembles kit and ships, (c) patient collects from clinic. Assess by cost, branding control, and speed. Document the chosen method.",timing:"Week 2",timingClass:"",dep:"After pharmacy confirmed",status:"todo"},
+    {id:"l2",name:"Packaging format confirmed",note:"Sealed pouch or box. No pharmacy name or branding visible externally. PROOF-branded label. Premium unboxing experience on zero inventory risk for Phase 0 — custom label on generic packaging.",timing:"Week 2–3",timingClass:"",dep:"After logo confirmed",status:"todo"},
+    {id:"l2b",name:"Printed inserts designed and produced",note:"Every kit needs a printed insert: protocol instructions, what to expect in the first 90 days, the Shedding Shield explanation, and a WhatsApp QR code for support. Phase 0 version can be laser-printed and hand-cut — premium feel on zero print run budget. Content must be medically accurate and reviewed before anything goes in a patient's hands.",timing:"Week 2–3",timingClass:"",dep:"After logo confirmed",status:"todo"},
+    {id:"l2c",name:"Custom brand labels designed and printed",note:"PROOF-branded labels for the Rx packaging, OTC components, and outer box or pouch. Phase 0: printed labels on generic containers — no custom moulding needed yet. Labels must comply with any MOH requirements on compounded Rx labelling — confirm what must appear on the Rx label vs what can be purely brand.",timing:"Week 2–3",timingClass:"",dep:"After logo + regulatory branding answer",status:"todo"},
+    {id:"l3",name:"First kit assembled and dispatched",note:"Manual assembly. Pharmacy dispenses the Rx component. Or assembles OTC components and packaging. Milestone: first real PROOF kit in a patient's hands.",timing:"After first payment",timingClass:"",dep:"After all supply confirmed",status:"todo"}
+  ]},
+  {id:"commercial",title:"Pricing & Commercial",badge:"commercial",badgeLabel:"Revenue",tasks:[
+    {id:"cm1",name:"Pricing finalised — all tiers",note:"Framework exists. Numbers locked only after full COGS sheet confirmed. Entry tier price is the critical conversion lever — must be high enough to sustain margins, low enough to not lose patients who'd otherwise go to SuperPharm.",timing:"After COGS locked",timingClass:"",dep:"After c4",status:"todo"},
+    {id:"cm2",name:"Payment collection method live",note:"Manual payment link for Phase 0 — no gateway yet. Friend's pharmacy as the collecting entity. PayMe / Bit / bank transfer acceptable for 10–20 patients.",timing:"Week 1",timingClass:"timing-week1",dep:"Pharmacy confirmed",status:"inprogress"},
+    {id:"cm3",name:"Patient sales pitch designed",note:"Dedicated session required. Full funnel script: what the physician says at the consultation, what the WhatsApp onboarding message says, and what closes the patient on payment. This is the highest-leverage Phase 0 task.",timing:"Dedicated session",timingClass:"timing-critical",dep:"Separate workstream",status:"todo"},
+    {id:"cm4",name:"Target patient number agreed",note:"10 or 20? Determines what Phase 0 needs to prove and when Phase 1 triggers. Small enough to manage manually, large enough to generate meaningful retention data.",timing:"Week 1",timingClass:"timing-week1",dep:"",status:"todo"}
+  ]},
+  {id:"patients",title:"Patient Tracking & Retention",badge:"operational",badgeLabel:"Operational",tasks:[
+    {id:"pt1",name:"Phase 0 patient tracking system built",note:"Building from zero. Minimum: structured spreadsheet or Notion table. Fields: patient name, tier, payment date, payment amount, dispatch date, day-28 renewal status, day-45 check-in status, month-2 payment status.",timing:"Before first patient",timingClass:"timing-week1",dep:"Blocks retention tracking",status:"todo"},
+    {id:"pt2",name:"WhatsApp intake script written",note:"Or manages all WhatsApp replies manually. Script covers: initial response, intake questions, basic contraindication screen, payment link delivery, confirmation of dispatch, and any follow-up questions.",timing:"Week 1",timingClass:"timing-week1",dep:"",status:"todo"},
+    {id:"pt3",name:"Day-28 renewal message template",note:"Manual WhatsApp message at day 28. Core Phase 0 data point: willingness to pay for month 2.",timing:"Before first patient",timingClass:"",dep:"",status:"todo"},
+    {id:"pt4",name:"Day-45 Shedding Shield check-in template",note:"Manual message during the highest-churn window. Proactively names the shedding phase and reframes it as clinical evidence the treatment is working.",timing:"Before first patient",timingClass:"",dep:"",status:"todo"},
+    {id:"pt5",name:"Phase 0 debrief — model validated",note:"TARGET: 10–20 patients on protocol, at least one full renewal cycle completed. Data collected: conversion rate, renewal rate, margin vs. COGS. This task being marked Done triggers Phase 1.",timing:"End of Month 1",timingClass:"",dep:"Triggers Phase 1",status:"todo"}
+  ]},
+  {id:"resolved",title:"Resolved & Deprioritised",badge:"pending",badgeLabel:"Closed",tasks:[
+    {id:"r1",name:"Clinical patient flow",note:"RESOLVED. Eric and Assi's existing daily consultation flow is the Phase 0 acquisition channel.",timing:"Resolved",timingClass:"timing-resolved",dep:"",status:"done"},
+    {id:"r2",name:"Audio vs video — MOH Circular 6/2019",note:"DEPRIORITISED for Phase 0. Patients come through in-person Peretz Medical consultations. Revisit for Phase 1.",timing:"Phase 1",timingClass:"timing-resolved",dep:"",status:"done"},
+    {id:"r3",name:"Payment collection entity",note:"RESOLVED. Friend's pharmacy handles patient payment collection for Phase 0.",timing:"Resolved",timingClass:"timing-resolved",dep:"",status:"done"},
+    {id:"r4",name:"XYON — Phase 0 inclusion",note:"OFF THE TABLE. Differentiation through compounded formulations only. Physician-designed Rx tiers.",timing:"Off table",timingClass:"timing-resolved",dep:"",status:"done"}
+  ]}
+];
+
+const P1A_TRACKS=[
+  {id:"legal",title:"Legal & Corporate Structure",badge:"legal",badgeLabel:"Legal",tasks:[
+    {id:"la1",name:"Founders' agreement — binding term sheet",note:"Equity distribution, vesting schedules, and operational roles. Before any entity is registered or external capital is deployed.",timing:"Month 2 — first",timingClass:"timing-critical",dep:"Blocks entity formation",status:"todo"},
+    {id:"la2",name:"Legal entity registered (PROOF Health Ltd.)",note:"Israeli company registration. Corporate banking account opened. This is the entity that signs all commercial contracts.",timing:"Month 2",timingClass:"timing-critical",dep:"Blocks gateway + contracts",status:"todo"},
+    {id:"la3",name:"MSO structure — legal sign-off",note:"Formal legal opinion confirming the MSO model is compliant with MOH guidelines. PROOF as platform, clinical entity separate, pharmacy as licensed dispenser.",timing:"Month 2",timingClass:"",dep:"After entity registered",status:"todo"},
+    {id:"la4",name:"Regulatory advisory — full A to Z",note:"Engage specialist health regulatory counsel. Full compliance map: MOH, Pharmacists Ordinance, Guideline 137, Rule 24/04, Circular 6/2019, privacy law.",timing:"Month 2 — ongoing",timingClass:"",dep:"",status:"todo"},
+    {id:"la5",name:"Terms of Service, Informed Consent, privacy registration",note:"TOS for patients. Informed Consent forms for the clinical flow. Medical database registered under Israeli privacy law.",timing:"Month 2–3",timingClass:"",dep:"",status:"todo"},
+    {id:"la6",name:"IP & trademark — brand filed in target jurisdictions",note:"File trademark for brand name and visual identity. Israel first. UAE and GCC as Phase 3 additions.",timing:"Month 2–3",timingClass:"",dep:"After brand confirmed",status:"todo"},
+    {id:"la7",name:"Trademark — technology method",note:"Register the proprietary technology method: WhatsApp-native subscription infrastructure, clinical monitoring flow, and automated retention system.",timing:"Month 2–3",timingClass:"",dep:"After platform architecture finalised",status:"todo"},
+    {id:"la8",name:"Trademark / patent — delivery vehicle formulations",note:"Assess patentability of the topical delivery vehicles used in the compounded formulations. If patentable, file before any public disclosure. If not patentable, explore trade secret protection instead.",timing:"Month 3–4",timingClass:"",dep:"After formulations locked",status:"todo"},
+    {id:"la9",name:"Clinical observation study — Peretz Medical clinics",note:"Low-cost observational study on PROOF protocol patients within Eric and Assi's existing clinical practice. Documents outcomes data, supports regulatory credibility, and builds the evidence base for IP claims and investor materials.",timing:"Month 3 — ongoing",timingClass:"",dep:"After Phase 0 patients on protocol",status:"todo"}
+  ]}
+];
+
+const P1B_TRACKS=[
+  {id:"finance",title:"Financial Operations & Payments",badge:"infra",badgeLabel:"Infrastructure",tasks:[
+    {id:"fb1",name:"Split-payment gateway live",note:"Auto-routes: Rx cost to pharmacy, consultation fee to clinical entity, platform fee to PROOF. This is what makes the MSO model commercially operational.",timing:"After MSO",timingClass:"",dep:"After MSO live",status:"todo"},
+    {id:"fb2",name:"Pharmacy SLA formally signed",note:"Contractual agreement covering dispensing, split-payment routing, SLAs, and liability.",timing:"After entity registered",timingClass:"",dep:"After entity",status:"todo"},
+    {id:"fb3",name:"Back-to-back invoicing structure confirmed",note:"Legal flow: patient pays → gateway splits → PROOF invoices pharmacy for Rx → pharmacy invoices lab. Clean regulatory boundaries at every step.",timing:"Month 2–3",timingClass:"",dep:"After gateway live",status:"todo"}
+  ]},
+  {id:"brand1b",title:"Product & Brand Build",badge:"commercial",badgeLabel:"Commercial",tasks:[
+    {id:"bb1",name:"Full brand identity — name, visual, tone, tier naming",note:"Phase 0 had a minimum viable brand. Phase 1B is the full build: brand guidelines, tier names, voice, Hebrew and English.",timing:"Month 2 — first priority",timingClass:"",dep:"",status:"todo"},
+    {id:"bb2",name:"Branded website — Hebrew, mobile-first, WhatsApp CTA",note:"Full site with protocol pages, tier presentation, clinical credibility signals, and WhatsApp as the primary conversion action.",timing:"Month 2–3",timingClass:"",dep:"After brand confirmed",status:"todo"},
+    {id:"bb3",name:"Premium packaging — sealed, branded unboxing experience",note:"Matte black or brand-aligned sealed packaging. No pharmacy branding visible. Designed for word-of-mouth and retention.",timing:"Month 3",timingClass:"",dep:"After brand confirmed",status:"todo"},
+    {id:"bb4",name:"Tier 2 compounding lab contract signed",note:"Via clinical entity under Procedure 135. Phase 1B product expansion — moving beyond Phase 0 generic Rx to the premium compounded tier.",timing:"Month 2–3",timingClass:"",dep:"After regulatory map confirmed",status:"todo"}
+  ]},
+  {id:"tech1b",title:"Technology & Automations",badge:"infra",badgeLabel:"Infrastructure",tasks:[
+    {id:"tb1",name:"WhatsApp API — hair automation sequences",note:"Automates the flows Or was running manually in Phase 0. Intake questionnaire, prescription confirmation, day-28 renewal, day-45 Shedding Shield. Hair-specific language and clinical framing only. Completely separate from performance sequences.",timing:"Month 2–3",timingClass:"",dep:"",status:"todo"},
+    {id:"tb2",name:"CRM and prescription management infrastructure",note:"Lightweight backend connecting patient intake to physician queue. Patient records, prescription status, renewal tracking.",timing:"Month 2",timingClass:"",dep:"",status:"todo"},
+    {id:"tb3",name:"Clinical intake questionnaire — secure, dynamic",note:"Handles sensitive patient data. Contraindication screening. MOH-compliant data handling.",timing:"Month 2–3",timingClass:"",dep:"",status:"todo"}
+  ]},
+  {id:"infra",title:"Infrastructure — CRM, ERP & System Integration",badge:"infra",badgeLabel:"Infrastructure",tasks:[
+    {id:"in1",name:"Tech stack decisions — CRM, automation tool, WhatsApp API provider",note:"Open decisions: CRM, automation layer (Zapier vs Make vs custom), WhatsApp Business API provider. These choices lock in the architecture for everything below.",timing:"Month 2 — first",timingClass:"",dep:"Blocks all below",status:"todo"},
+    {id:"in2",name:"WhatsApp Business API — account setup and compliance",note:"Business account verified. Message templates approved by Meta. Two separate inboxes: one for hair, one for performance. These must never share a thread or bleed into each other.",timing:"Month 2",timingClass:"",dep:"After in1",status:"todo"},
+    {id:"in3",name:"CRM — hair line patient records",note:"Patient name, tier, subscription start, prescription status, dispatch dates, renewal history, Shedding Shield log, churn status. Separate from performance records.",timing:"Month 2",timingClass:"",dep:"After in1",status:"todo"},
+    {id:"in4",name:"CRM — performance line patient records",note:"Separate from hair. Anonymised until clinically necessary. Protocol, dispatch dates, renewal history, upsell and cross-sell status.",timing:"Phase 2 — before performance launch",timingClass:"",dep:"After in1",status:"todo"},
+    {id:"in5",name:"Performance WhatsApp automation sequences",note:"Completely separate from hair. Day 1 welcome, Day 7 check-in, Day 21 Weekend Elite upsell, Day 28 renewal, Day 33 human re-engagement, Month 2 Weekend Elite, Month 4-6 hair cross-sell. Discretion-first language throughout.",timing:"Phase 2 — before performance launch",timingClass:"",dep:"After in2 + in4",status:"todo"},
+    {id:"in6",name:"Pharmacy integration — digital prescription and dispatch trigger",note:"Payment confirmed → prescription sent → pharmacy dispatches → tracking returned. Whether Zapier, email-based, or direct API depends on pharmacy capability.",timing:"Month 2–3",timingClass:"",dep:"After pharmacy SLA signed",status:"todo"},
+    {id:"in7",name:"Order management and OTC inventory tracking",note:"OTC kit component stock levels, reorder triggers, kit assembly log, dispatch confirmation. Airtable or simple spreadsheet at Phase 1 scale.",timing:"Month 3",timingClass:"",dep:"",status:"todo"},
+    {id:"in8",name:"Medical database registration — Israeli Privacy Protection Law",note:"Formal registration under Israeli Privacy Protection Law and 2024 Medical Information Portability Law. Clinical data architecturally separate from commercial CRM data.",timing:"Month 2 — before scale",timingClass:"",dep:"After legal entity registered",status:"todo"},
+    {id:"in9",name:"Split-payment gateway integration with CRM",note:"Payment events auto-update subscription status in CRM. Renewal confirmed → subscription extended → dispatch triggered. Failed payment → re-engagement sequence.",timing:"Month 3",timingClass:"",dep:"After gateway + CRM live",status:"todo"}
+  ]}
+];
+
+const P2_TRACKS=[
+  {id:"scale",title:"Scale & Technology",badge:"gtm",badgeLabel:"Growth",tasks:[
+    {id:"sc1",name:"AI Follicle Tracker MVP — macro lens + white-label scanner",note:"Clip-on macro lens shipped with kit. White-label B2B follicle scanning platform licensed for D2C context. Month-2 Shedding Shield automated and deployed.",timing:"Month 4–5",timingClass:"",dep:"After Phase 1B live",status:"todo"},
+    {id:"sc2",name:"Paid acquisition live — Meta and Google",note:"Cold acquisition. Requires branded website, gateway, and automation to be fully operational. Marketing architecture must comply with Rule 24/04.",timing:"Month 5",timingClass:"",dep:"After website + gateway",status:"todo"},
+    {id:"sc3",name:"Performance line full launch",note:"Daily Tadalafil + on-demand Sildenafil bundles. Full patient flow from lead to prescription to dispatch. Cross-sell to existing hair subscribers.",timing:"Month 4",timingClass:"",dep:"After Phase 1A complete",status:"todo"},
+    {id:"sc4",name:"Provisional patent — Shedding Shield method",note:"File provisional patent on the clinical monitoring + AI tracking method before it becomes visible to competitors.",timing:"Month 4",timingClass:"",dep:"",status:"todo"},
+    {id:"sc5",name:"UAE regulatory mapping",note:"Gulf expansion planning. Map UAE regulatory environment for telemedicine and Rx dispensing. Assess Assi's licence status and applicability.",timing:"Month 5–6",timingClass:"",dep:"",status:"todo"},
+    {id:"sc6",name:"Fundraise decision — raise on retention data",note:"Decision: bootstrap to profitability or raise on retention data at Month 12.",timing:"Month 12",timingClass:"",dep:"After retention data available",status:"todo"}
+  ]},
+  {id:"perf",title:"Performance Line — ED & Optimisation",badge:"gtm",badgeLabel:"Phase 2 launch",tasks:[
+    {id:"pf1",name:"Clinical sign-off — Daily Tadalafil as optimisation protocol",note:"Eric and Assi confirm the Daily Tadalafil 5mg protocol. Language locked: 'Daily Optimisation Protocol', 'Always ready', 'No timing required'. The words ED and impotence never appear — regulatory requirement under MOH Rule 24/04.",timing:"Phase 2 — Month 4",timingClass:"",dep:"After Phase 1 live",status:"todo"},
+    {id:"pf2",name:"Performance bundle composition agreed",note:"Prescription core: Daily Tadalafil 5mg (anchor), Sildenafil 100mg on-demand (grey-market conversion only), Tadalafil 20mg Weekend Elite (upsell). Non-prescription components TBD with Eric and Assi.",timing:"Phase 2 — Month 4",timingClass:"",dep:"",status:"todo"},
+    {id:"pf3",name:"Stealth patient flow — anonymous entry architecture",note:"Maximum discretion by design: phone number only to begin, identity collected at the latest clinically defensible moment, no website or logo for warm traffic.",timing:"Phase 2 — Month 4",timingClass:"",dep:"",status:"todo"},
+    {id:"pf4",name:"Physician confirmation flow — speed promise confirmed",note:"Same-day dispatch in Tel Aviv metro is the target. Physician availability must be operationally confirmed before this is promised to any patient.",timing:"Before first patient",timingClass:"",dep:"After pf1",status:"todo"},
+    {id:"pf5",name:"Packaging confirmed — matte black, zero clinical language",note:"Sealed matte black pouches. No pharmacy name. No medical symbols. No clinical language. Recipient name only.",timing:"Phase 2 — Month 4",timingClass:"",dep:"After brand confirmed",status:"todo"},
+    {id:"pf6",name:"WhatsApp automation sequence — performance line",note:"Separate sequence entirely. Day 1 welcome, Day 7 check-in, Day 21 Weekend Elite upsell, Day 28 renewal, Day 33 human re-engagement, Month 2 Weekend Elite, Month 4-6 hair cross-sell.",timing:"Phase 2 — Month 4–5",timingClass:"",dep:"After WhatsApp API live",status:"todo"},
+    {id:"pf7",name:"Kamagra grey-market conversion strategy",note:"Sildenafil 100mg is the acquisition product for grey-market Kamagra users only. Entry: licensed, safe, same speed. Journey: move toward Daily Tadalafil once inside the platform.",timing:"Phase 2 — Month 5",timingClass:"",dep:"After platform live",status:"todo"},
+    {id:"pf8",name:"Performance line regulatory sign-off — marketing architecture",note:"MOH Guideline 137 and Rule 24/04 compliance for performance marketing. Requires regulatory counsel sign-off before any paid acquisition.",timing:"Phase 2 — Month 4",timingClass:"",dep:"Before any paid acquisition",status:"todo"},
+    {id:"pf9",name:"Cross-sell: hair subscribers introduced to performance line",note:"Introduced at Month 4-6 to hair subscribers with strong engagement. Earned, not pushed.",timing:"Phase 2 — Month 5–6",timingClass:"",dep:"After performance line live",status:"todo"}
+  ]},
+  {id:"gtm",title:"Go-To-Market Channels",badge:"gtm",badgeLabel:"Growth",tasks:[
+    {id:"gt1",name:"Social media strategy & content system",note:"Requires locked brand identity and live platform. Clinical authority content (MOH Guideline 137 compliant), awareness not drug advertising, Hebrew-first.",timing:"Phase 2",timingClass:"",dep:"After brand locked + Phase 1B live",status:"todo"},
+    {id:"gt2",name:"Social media design system & templates",note:"Reusable visual templates aligned to brand identity. Educational posts, clinical credibility posts, retention content.",timing:"Phase 2",timingClass:"",dep:"After brand identity finalised",status:"todo"},
+    {id:"gt3",name:"MD affiliate model — dermatologist concierge pitch",note:"Package PROOF as a zero-friction premium compounding service for dermatologists. Requires working platform and proof of concept first.",timing:"Phase 2",timingClass:"",dep:"After Phase 0 validated + platform live",status:"todo"},
+    {id:"gt4",name:"Barbershop affiliate model — B2B2C referral programme",note:"Commission-based referral engine for barbers, trichologists, aestheticians. High-trust, high-frequency touchpoint for the exact target customer.",timing:"Phase 2",timingClass:"",dep:"After Phase 0 validated + platform live",status:"todo"}
+  ]}
+];
+
+const SC=["todo","inprogress","done","blocker"];
+const SL={blocker:"Blocker",todo:"To do",inprogress:"In progress",done:"Done"};
+const SCL={blocker:"s-blocker",todo:"s-todo",inprogress:"s-inprogress",done:"s-done"};
+const DCL={blocker:"dot-blocker",todo:"dot-todo",inprogress:"dot-inprogress",done:"dot-done"};
+const BADGE={pending:"pill-pending",research:"pill-research",operational:"pill-operational",commercial:"pill-commercial",legal:"pill-legal",infra:"pill-infra",gtm:"pill-gtm",critical:"pill-critical"};
+
+let state={},notes={};
+
+function load(){try{const s=localStorage.getItem("proof_v3_s"),n=localStorage.getItem("proof_v3_n");if(s)state=JSON.parse(s);if(n)notes=JSON.parse(n);}catch(e){}}
+function save(){try{localStorage.setItem("proof_v3_s",JSON.stringify(state));localStorage.setItem("proof_v3_n",JSON.stringify(notes));}catch(e){}document.getElementById("lastUpdated").textContent=new Date().toLocaleString("en-GB",{day:"2-digit",month:"short",year:"numeric",hour:"2-digit",minute:"2-digit"});}
+
+function initState(){[...P0_TRACKS,...P1A_TRACKS,...P1B_TRACKS,...P2_TRACKS].forEach(t=>t.tasks.forEach(k=>{if(!state[k.id])state[k.id]=k.status;if(notes[k.id]===undefined)notes[k.id]="";}))}
+
+function resetAll(){if(!confirm("Reset all statuses?"))return;state={};notes={};try{localStorage.removeItem("proof_v3_s");localStorage.removeItem("proof_v3_n");}catch(e){}initState();renderAll();}
+
+function cycleStatus(id){
+  const cur=state[id];
+  state[id]=SC[(SC.indexOf(cur)+1)%SC.length];
+  save();
+  const btn=document.querySelector('[data-badge="'+id+'"]');
+  if(btn){const s=state[id];btn.className="status-btn "+SCL[s];btn.innerHTML='<span class="dot '+DCL[s]+'"></span>'+SL[s];}
+  const row=document.querySelector('[data-row="'+id+'"]');
+  if(row)row.className=state[id]==="done"?"row-done":"";
+  updateStats();
+}
+
+function updateNote(id,val){notes[id]=val;save();}
+
+function updateStats(){
+  const ids=P0_TRACKS.flatMap(t=>t.tasks.map(k=>k.id));
+  let bl=0,ip=0,dn=0;
+  ids.forEach(id=>{const s=state[id];if(s==="blocker")bl++;else if(s==="inprogress")ip++;else if(s==="done")dn++;});
+  const pct=ids.length>0?Math.round((dn/ids.length)*100):0;
+  document.getElementById("cnt-blocker").textContent=bl;
+  document.getElementById("cnt-inprogress").textContent=ip;
+  document.getElementById("cnt-done").textContent=dn;
+  document.getElementById("cnt-total").textContent=ids.length;
+  document.getElementById("globalPct").textContent=pct+"%";
+  document.getElementById("globalBar").style.width=pct+"%";
+  [...P0_TRACKS,...P1A_TRACKS,...P1B_TRACKS,...P2_TRACKS].forEach(track=>{
+    const tids=track.tasks.map(t=>t.id);
+    const d=tids.filter(id=>state[id]==="done").length;
+    const p=tids.length>0?Math.round((d/tids.length)*100):0;
+    const pe=document.getElementById("tp-"+track.id);
+    const be=document.getElementById("tb-"+track.id);
+    if(pe)pe.textContent=p+"%";
+    if(be)be.style.width=p+"%";
+  });
+}
+
+function buildTracks(tracks,prefix){
+  let html="";
+  tracks.forEach(track=>{
+    html+=`<div class="track" id="track-${track.id}">
+      <div class="track-head">
+        <div class="track-title">${track.title}</div>
+        <div class="track-pill ${BADGE[track.badge]||'pill-pending'}">${track.badgeLabel}</div>
+        <div class="track-prog">
+          <span class="track-prog-pct" id="tp-${track.id}">0%</span>
+          <div class="track-prog-bar"><div class="track-prog-fill" id="tb-${track.id}" style="width:0%"></div></div>
+        </div>
+      </div>
+      <table class="task-table">
+        <colgroup><col class="col-task"><col class="col-timing"><col class="col-dep"><col class="col-status"><col class="col-notes"></colgroup>
+        <thead><tr><th>Task</th><th>Timing</th><th>Dependency</th><th>Status</th><th>Notes</th></tr></thead>
+        <tbody>`;
+    track.tasks.forEach(task=>{
+      const s=state[task.id]||task.status;
+      const n=(notes[task.id]||"").replace(/"/g,"&quot;");
+      const rc=s==="done"?"row-done":"";
+      html+=`<tr class="${rc}" data-row="${task.id}">
+        <td><div class="task-name">${task.name}</div><div class="task-note">${task.note}</div></td>
+        <td><span class="task-timing ${task.timingClass}">${task.timing}</span></td>
+        <td>${task.dep?`<span class="dep-chip">${task.dep}</span>`:""}</td>
+        <td><button class="status-btn ${SCL[s]}" data-badge="${task.id}" onclick="cycleStatus('${task.id}')"><span class="dot ${DCL[s]}"></span>${SL[s]}</button></td>
+        <td><input class="notes-input" type="text" placeholder="Add note…" value="${n}" oninput="updateNote('${task.id}',this.value)"/></td>
+      </tr>`;
+    });
+    html+=`</tbody></table></div>`;
+  });
+  return html;
+}
+
+function renderAll(){
+  document.getElementById("p0-content").innerHTML=buildTracks(P0_TRACKS,"p0");
+  document.getElementById("p1a-content").innerHTML=buildTracks(P1A_TRACKS,"p1a");
+  document.getElementById("p1b-content").innerHTML=buildTracks(P1B_TRACKS,"p1b");
+  document.getElementById("p2-content").innerHTML=buildTracks(P2_TRACKS,"p2");
+  updateStats();
+  document.getElementById("lastUpdated").textContent=new Date().toLocaleString("en-GB",{day:"2-digit",month:"short",year:"numeric"});
+}
+
+function switchPhase(phase){
+  document.querySelectorAll(".phase-tab").forEach(t=>t.classList.remove("active"));
+  document.querySelectorAll(".phase-panel").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".subnav").forEach(s=>s.classList.remove("visible"));
+  document.getElementById("tab-"+phase).classList.add("active");
+  document.getElementById("panel-"+phase).classList.add("active");
+  const sn=document.getElementById("subnav-"+phase);
+  if(sn)sn.classList.add("visible");
+}
+
+function scrollTo(id,el){
+  const target=document.getElementById("track-"+id);
+  if(target)target.scrollIntoView({behavior:"smooth",block:"start"});
+  document.querySelectorAll(".subnav-tab").forEach(t=>t.classList.remove("active"));
+  if(el)el.classList.add("active");
+}
+
+load();
+initState();
+renderAll();
+</script>
+</body>
+</html>
